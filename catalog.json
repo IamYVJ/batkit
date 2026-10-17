@@ -9,7 +9,9 @@
     { "id": "power", "title": "Power", "blurb": "Sleep, shutdown timers, power plans and staying awake." },
     { "id": "audio", "title": "Audio", "blurb": "Volume, mute and choosing where sound plays." },
     { "id": "network", "title": "Network", "blurb": "Wi-Fi, DNS and connection fixes." },
+    { "id": "system", "title": "System", "blurb": "Check on your PC and repair Windows." },
     { "id": "cleanup", "title": "Cleanup", "blurb": "Quick fixes for a cluttered or frozen desktop." },
+    { "id": "open", "title": "Quick open", "blurb": "Jump straight to Windows tools and folders." },
     { "id": "focus", "title": "Focus", "blurb": "Cut distractions and start your workday." }
   ],
   "scripts": [
@@ -218,6 +220,182 @@
       "title": "Start work",
       "description": "Opens your usual work apps and websites in one go.",
       "note": "A template: edit it to list your own sites and apps."
+    },
+
+    {
+      "file": "display/snip-screen.bat",
+      "title": "Snip screen",
+      "description": "Opens the screen snipping overlay (Win+Shift+S). The capture goes to the clipboard."
+    },
+    {
+      "file": "display/desktop-icons-toggle.bat",
+      "title": "Desktop icons toggle",
+      "description": "Shows or hides every icon on the desktop.",
+      "note": "Restarts Explorer to apply it, so the taskbar flickers briefly."
+    },
+
+    {
+      "file": "power/lock-now.bat",
+      "title": "Lock now",
+      "description": "Locks the PC (Win+L)."
+    },
+    {
+      "file": "power/log-off.bat",
+      "title": "Sign out",
+      "description": "Signs you out right away.",
+      "note": "Open apps are closed, so save your work first."
+    },
+    {
+      "file": "power/restart-to-bios.bat",
+      "title": "Restart to BIOS/UEFI",
+      "description": "Restarts straight into the firmware setup screen after a 5 second countdown.",
+      "admin": true,
+      "note": "UEFI PCs only. Save your work first. Run Cancel shutdown within 5 seconds to abort."
+    },
+
+    {
+      "file": "audio/open-sound-settings.bat",
+      "title": "Open Sound settings",
+      "description": "Opens the Sound settings page for output and input devices and volume."
+    },
+    {
+      "file": "audio/open-app-volume.bat",
+      "title": "Open App volume",
+      "description": "Opens App volume and device preferences, to set volume or output device per app."
+    },
+
+    {
+      "file": "network/show-ip.bat",
+      "title": "Show IP address",
+      "description": "Shows this PC's IPv4 address, default gateway and DNS servers for each adapter."
+    },
+    {
+      "file": "network/internet-check.bat",
+      "title": "Internet check",
+      "description": "Tells you whether a problem is your connection or DNS. Pings 1.1.1.1, then looks up one.one.one.one."
+    },
+    {
+      "file": "network/list-wifi-networks.bat",
+      "title": "List Wi-Fi networks",
+      "description": "Lists the Wi-Fi networks in range with their security type and signal strength."
+    },
+
+    {
+      "file": "system/system-info.bat",
+      "title": "System info",
+      "description": "Shows Windows version, CPU, memory, uptime and free disk space on one screen.",
+      "requires": ["system/system-info.ps1"]
+    },
+    {
+      "file": "system/battery-report.bat",
+      "title": "Battery report",
+      "description": "Builds a battery health report (design vs. current capacity, usage history) and opens it.",
+      "note": "Meant for laptops. On a desktop PC the report opens but has no battery data."
+    },
+    {
+      "file": "system/startup-apps.bat",
+      "title": "Startup apps",
+      "description": "Opens Settings > Apps > Startup, to switch off apps that launch when you sign in."
+    },
+    {
+      "file": "system/windows-update.bat",
+      "title": "Windows Update",
+      "description": "Opens Windows Update, ready to check for updates."
+    },
+    {
+      "file": "system/disk-cleanup.bat",
+      "title": "Disk Cleanup",
+      "description": "Opens Windows' Disk Cleanup tool. It asks which drive to scan and what to delete."
+    },
+    {
+      "file": "system/repair-windows.bat",
+      "title": "Repair Windows",
+      "description": "Repairs corrupted Windows files with DISM, then SFC.",
+      "admin": true,
+      "note": "Can take 10 to 30 minutes. DISM downloads repair files from Windows Update."
+    },
+
+    {
+      "file": "cleanup/empty-recycle-bin.bat",
+      "title": "Empty Recycle Bin",
+      "description": "Permanently empties the Recycle Bin on every drive, after asking you to confirm.",
+      "note": "Deleted files can't be recovered."
+    },
+    {
+      "file": "cleanup/clear-clipboard.bat",
+      "title": "Clear clipboard",
+      "description": "Empties the clipboard, e.g. after copying a password.",
+      "note": "Doesn't clear Windows clipboard history (Win+V)."
+    },
+    {
+      "file": "cleanup/clear-recent-files.bat",
+      "title": "Clear recent files",
+      "description": "Clears the Recent files list in File Explorer and recent items in taskbar Jump Lists."
+    },
+
+    {
+      "file": "open/env-vars.bat",
+      "title": "Environment variables",
+      "description": "Opens the Environment Variables editor."
+    },
+    {
+      "file": "open/startup-folder.bat",
+      "title": "Startup folder",
+      "description": "Opens your Startup folder. Shortcuts placed there run when you sign in."
+    },
+    {
+      "file": "open/downloads-folder.bat",
+      "title": "Downloads folder",
+      "description": "Opens your Downloads folder, even if you've moved it."
+    },
+    {
+      "file": "open/appdata-folder.bat",
+      "title": "AppData folder",
+      "description": "Opens your AppData\\Roaming folder, where many apps keep their settings."
+    },
+    {
+      "file": "open/device-manager.bat",
+      "title": "Device Manager",
+      "description": "Opens Device Manager."
+    },
+    {
+      "file": "open/services.bat",
+      "title": "Services",
+      "description": "Opens the Services list."
+    },
+    {
+      "file": "open/hosts-file.bat",
+      "title": "Edit hosts file",
+      "description": "Opens the hosts file in Notepad with admin rights, so you can save changes.",
+      "admin": true
+    },
+    {
+      "file": "open/god-mode.bat",
+      "title": "All Tasks (God Mode)",
+      "description": "Opens every Control Panel setting in one searchable list."
+    },
+
+    {
+      "file": "focus/pomodoro-25.bat",
+      "title": "Focus timer: 25 minutes",
+      "description": "Counts down 25 minutes, then pops up a message. Close the window to cancel.",
+      "note": "Edit MINUTES at the top for a different length."
+    },
+    {
+      "file": "focus/break-5.bat",
+      "title": "Break timer: 5 minutes",
+      "description": "Counts down a 5 minute break, then pops up a message. Close the window to cancel.",
+      "note": "Edit MINUTES at the top for a different length."
+    },
+    {
+      "file": "focus/minimize-all.bat",
+      "title": "Minimize all windows",
+      "description": "Minimizes every open window (Win+M). Undo with Restore windows."
+    },
+    {
+      "file": "focus/restore-windows.bat",
+      "title": "Restore windows",
+      "description": "Brings back the windows hidden by Minimize all (Win+Shift+M)."
     }
   ]
 }

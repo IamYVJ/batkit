@@ -34,6 +34,8 @@ Monitors, brightness, themes and projector modes.
 | [`duplicate-displays.bat`](scripts/display/duplicate-displays.bat) | Shows the same image on every display (Win+P, Duplicate). |
 | [`second-screen-only.bat`](scripts/display/second-screen-only.bat) | Uses only the external display (Win+P, Second screen only). |
 | [`pc-screen-only.bat`](scripts/display/pc-screen-only.bat) | Uses only the main display (Win+P, PC screen only). |
+| [`snip-screen.bat`](scripts/display/snip-screen.bat) | Opens the screen snipping overlay (Win+Shift+S). The capture goes to the clipboard. |
+| [`desktop-icons-toggle.bat`](scripts/display/desktop-icons-toggle.bat) | Shows or hides every icon on the desktop. |
 
 ### Power
 
@@ -50,6 +52,9 @@ Sleep, shutdown timers, power plans and staying awake.
 | [`power-plan-balanced.bat`](scripts/power/power-plan-balanced.bat) | Switches to the Balanced power plan. |
 | [`power-plan-saver.bat`](scripts/power/power-plan-saver.bat) | Switches to the Power saver plan. |
 | [`stay-awake.bat`](scripts/power/stay-awake.bat) | Stops the PC and screen from sleeping for as long as its window stays open. Press Enter or close the window to stop. |
+| [`lock-now.bat`](scripts/power/lock-now.bat) | Locks the PC (Win+L). |
+| [`log-off.bat`](scripts/power/log-off.bat) | Signs you out right away. |
+| [`restart-to-bios.bat`](scripts/power/restart-to-bios.bat) | Restarts straight into the firmware setup screen after a 5 second countdown. **Needs admin.** |
 
 ### Audio
 
@@ -62,6 +67,8 @@ Volume, mute and choosing where sound plays.
 | [`switch-to-headphones.bat`](scripts/audio/switch-to-headphones.bat) | Makes your headphones the default playback device. |
 | [`switch-to-speakers.bat`](scripts/audio/switch-to-speakers.bat) | Makes your speakers the default playback device. |
 | [`list-audio-devices.bat`](scripts/audio/list-audio-devices.bat) | Shows your active playback devices, so you know what to put in the switch scripts. |
+| [`open-sound-settings.bat`](scripts/audio/open-sound-settings.bat) | Opens the Sound settings page for output and input devices and volume. |
+| [`open-app-volume.bat`](scripts/audio/open-app-volume.bat) | Opens App volume and device preferences, to set volume or output device per app. |
 
 ### Network
 
@@ -74,6 +81,22 @@ Wi-Fi, DNS and connection fixes.
 | [`flush-dns.bat`](scripts/network/flush-dns.bat) | Clears the DNS cache. Often fixes a site that won't load after it moved servers. |
 | [`network-reset.bat`](scripts/network/network-reset.bat) | Releases and renews your IP address, flushes DNS and resets Winsock. **Needs admin.** |
 | [`show-wifi-password.bat`](scripts/network/show-wifi-password.bat) | Shows the saved password of the Wi-Fi network you're connected to. **Needs admin.** |
+| [`show-ip.bat`](scripts/network/show-ip.bat) | Shows this PC's IPv4 address, default gateway and DNS servers for each adapter. |
+| [`internet-check.bat`](scripts/network/internet-check.bat) | Tells you whether a problem is your connection or DNS. Pings 1.1.1.1, then looks up one.one.one.one. |
+| [`list-wifi-networks.bat`](scripts/network/list-wifi-networks.bat) | Lists the Wi-Fi networks in range with their security type and signal strength. |
+
+### System
+
+Check on your PC and repair Windows.
+
+| Script | What it does |
+|---|---|
+| [`system-info.bat`](scripts/system/system-info.bat) | Shows Windows version, CPU, memory, uptime and free disk space on one screen. |
+| [`battery-report.bat`](scripts/system/battery-report.bat) | Builds a battery health report (design vs. current capacity, usage history) and opens it. |
+| [`startup-apps.bat`](scripts/system/startup-apps.bat) | Opens Settings > Apps > Startup, to switch off apps that launch when you sign in. |
+| [`windows-update.bat`](scripts/system/windows-update.bat) | Opens Windows Update, ready to check for updates. |
+| [`disk-cleanup.bat`](scripts/system/disk-cleanup.bat) | Opens Windows' Disk Cleanup tool. It asks which drive to scan and what to delete. |
+| [`repair-windows.bat`](scripts/system/repair-windows.bat) | Repairs corrupted Windows files with DISM, then SFC. **Needs admin.** |
 
 ### Cleanup
 
@@ -84,6 +107,24 @@ Quick fixes for a cluttered or frozen desktop.
 | [`clear-temp.bat`](scripts/cleanup/clear-temp.bat) | Empties your user temp folder. Files that are in use are skipped. |
 | [`restart-explorer.bat`](scripts/cleanup/restart-explorer.bat) | Restarts Windows Explorer. Fixes a frozen or glitchy taskbar and Start menu. |
 | [`kill-browsers.bat`](scripts/cleanup/kill-browsers.bat) | Force-closes Chrome, Edge, Firefox, Brave, Opera and Vivaldi. |
+| [`empty-recycle-bin.bat`](scripts/cleanup/empty-recycle-bin.bat) | Permanently empties the Recycle Bin on every drive, after asking you to confirm. |
+| [`clear-clipboard.bat`](scripts/cleanup/clear-clipboard.bat) | Empties the clipboard, e.g. after copying a password. |
+| [`clear-recent-files.bat`](scripts/cleanup/clear-recent-files.bat) | Clears the Recent files list in File Explorer and recent items in taskbar Jump Lists. |
+
+### Quick open
+
+Jump straight to Windows tools and folders.
+
+| Script | What it does |
+|---|---|
+| [`env-vars.bat`](scripts/open/env-vars.bat) | Opens the Environment Variables editor. |
+| [`startup-folder.bat`](scripts/open/startup-folder.bat) | Opens your Startup folder. Shortcuts placed there run when you sign in. |
+| [`downloads-folder.bat`](scripts/open/downloads-folder.bat) | Opens your Downloads folder, even if you've moved it. |
+| [`appdata-folder.bat`](scripts/open/appdata-folder.bat) | Opens your AppData\Roaming folder, where many apps keep their settings. |
+| [`device-manager.bat`](scripts/open/device-manager.bat) | Opens Device Manager. |
+| [`services.bat`](scripts/open/services.bat) | Opens the Services list. |
+| [`hosts-file.bat`](scripts/open/hosts-file.bat) | Opens the hosts file in Notepad with admin rights, so you can save changes. **Needs admin.** |
+| [`god-mode.bat`](scripts/open/god-mode.bat) | Opens every Control Panel setting in one searchable list. |
 
 ### Focus
 
@@ -94,6 +135,10 @@ Cut distractions and start your workday.
 | [`focus-mode.bat`](scripts/focus/focus-mode.bat) | Closes chat apps and turns off notification banners. Undo with Focus mode off. |
 | [`focus-off.bat`](scripts/focus/focus-off.bat) | Turns notification banners back on after Focus mode on. |
 | [`work-start.bat`](scripts/focus/work-start.bat) | Opens your usual work apps and websites in one go. |
+| [`pomodoro-25.bat`](scripts/focus/pomodoro-25.bat) | Counts down 25 minutes, then pops up a message. Close the window to cancel. |
+| [`break-5.bat`](scripts/focus/break-5.bat) | Counts down a 5 minute break, then pops up a message. Close the window to cancel. |
+| [`minimize-all.bat`](scripts/focus/minimize-all.bat) | Minimizes every open window (Win+M). Undo with Restore windows. |
+| [`restore-windows.bat`](scripts/focus/restore-windows.bat) | Brings back the windows hidden by Minimize all (Win+Shift+M). |
 
 <!-- scripts:end -->
 
