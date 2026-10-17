@@ -2,7 +2,7 @@
 
 One-click Windows `.bat` scripts for everyday tasks: turn the monitors off, switch audio devices, flush DNS, start your workday. Each script is a small, readable text file you can double-click.
 
-**Browse and download:** open [`docs/index.html`](docs/index.html) in any browser. It's a single offline page that lists every script, shows its source, and downloads it (or everything as a zip). If you host the repo on GitHub Pages (Settings > Pages > Deploy from branch > `main` / `docs`), it's also a live website.
+**Browse and download:** open [`Live Website`](https://iamyvj.github.io/batkit/). It's a single page that lists every script, shows its source, and downloads it (or everything as a zip). 
 
 ## Using a script
 
