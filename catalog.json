@@ -1,0 +1,223 @@
+{
+  "site": {
+    "title": "batkit",
+    "tagline": "One-click Windows scripts for everyday tasks. Read them, download them, run them.",
+    "repo": ""
+  },
+  "categories": [
+    { "id": "display", "title": "Display", "blurb": "Monitors, brightness, themes and projector modes." },
+    { "id": "power", "title": "Power", "blurb": "Sleep, shutdown timers, power plans and staying awake." },
+    { "id": "audio", "title": "Audio", "blurb": "Volume, mute and choosing where sound plays." },
+    { "id": "network", "title": "Network", "blurb": "Wi-Fi, DNS and connection fixes." },
+    { "id": "cleanup", "title": "Cleanup", "blurb": "Quick fixes for a cluttered or frozen desktop." },
+    { "id": "focus", "title": "Focus", "blurb": "Cut distractions and start your workday." }
+  ],
+  "scripts": [
+    {
+      "file": "display/monitoroff.bat",
+      "title": "Monitors off",
+      "description": "Turns every connected monitor off until you move the mouse or press a key. Nothing is locked or closed."
+    },
+    {
+      "file": "display/monitoroff-lock.bat",
+      "title": "Lock and monitors off",
+      "description": "Locks the PC, then switches the monitors off. Waking them shows the lock screen."
+    },
+    {
+      "file": "display/brightness-low.bat",
+      "title": "Brightness 20%",
+      "description": "Dims the screen to 20% brightness.",
+      "note": "Works on laptop panels. Most external monitors don't accept brightness commands from Windows."
+    },
+    {
+      "file": "display/brightness-high.bat",
+      "title": "Brightness 100%",
+      "description": "Sets the screen to full brightness.",
+      "note": "Works on laptop panels. Most external monitors don't accept brightness commands from Windows."
+    },
+    {
+      "file": "display/night-light-toggle.bat",
+      "title": "Night light toggle",
+      "description": "Turns Night light (warm screen colours) on or off.",
+      "requires": ["display/night-light-toggle.ps1"],
+      "note": "Edits an undocumented Windows setting, so a future Windows update could break it."
+    },
+    {
+      "file": "display/dark-mode-toggle.bat",
+      "title": "Dark mode toggle",
+      "description": "Switches Windows and apps between dark and light mode.",
+      "note": "Some apps that are already open only update after a restart."
+    },
+    {
+      "file": "display/extend-displays.bat",
+      "title": "Extend displays",
+      "description": "Extends the desktop across all connected displays (Win+P, Extend)."
+    },
+    {
+      "file": "display/duplicate-displays.bat",
+      "title": "Duplicate displays",
+      "description": "Shows the same image on every display (Win+P, Duplicate)."
+    },
+    {
+      "file": "display/second-screen-only.bat",
+      "title": "Second screen only",
+      "description": "Uses only the external display (Win+P, Second screen only)."
+    },
+    {
+      "file": "display/pc-screen-only.bat",
+      "title": "PC screen only",
+      "description": "Uses only the main display (Win+P, PC screen only)."
+    },
+
+    {
+      "file": "power/sleep-now.bat",
+      "title": "Sleep now",
+      "description": "Puts the PC to sleep right away."
+    },
+    {
+      "file": "power/hibernate-now.bat",
+      "title": "Hibernate now",
+      "description": "Hibernates the PC right away.",
+      "note": "Hibernation must be enabled first (admin command: powercfg /hibernate on)."
+    },
+    {
+      "file": "power/restart-now.bat",
+      "title": "Restart now",
+      "description": "Restarts the PC immediately, without a countdown."
+    },
+    {
+      "file": "power/shutdown-in-30.bat",
+      "title": "Shut down in 30 minutes",
+      "description": "Schedules a shutdown in 30 minutes. Handy for falling asleep to a video."
+    },
+    {
+      "file": "power/cancel-shutdown.bat",
+      "title": "Cancel shutdown",
+      "description": "Cancels a scheduled shutdown or restart."
+    },
+    {
+      "file": "power/power-plan-performance.bat",
+      "title": "Power plan: High performance",
+      "description": "Switches to the High performance power plan.",
+      "note": "Some laptops don't offer this plan. The script tells you if so."
+    },
+    {
+      "file": "power/power-plan-balanced.bat",
+      "title": "Power plan: Balanced",
+      "description": "Switches to the Balanced power plan."
+    },
+    {
+      "file": "power/power-plan-saver.bat",
+      "title": "Power plan: Power saver",
+      "description": "Switches to the Power saver plan.",
+      "note": "Some PCs don't offer this plan. The script tells you if so."
+    },
+    {
+      "file": "power/stay-awake.bat",
+      "title": "Stay awake",
+      "description": "Stops the PC and screen from sleeping for as long as its window stays open. Press Enter or close the window to stop."
+    },
+
+    {
+      "file": "audio/mute-toggle.bat",
+      "title": "Mute toggle",
+      "description": "Mutes or unmutes the system volume, like the keyboard mute key."
+    },
+    {
+      "file": "audio/volume-50.bat",
+      "title": "Volume 50%",
+      "description": "Sets the volume to 50%.",
+      "note": "Works by pressing the volume keys, so the volume pop-up flashes on screen."
+    },
+    {
+      "file": "audio/switch-to-headphones.bat",
+      "title": "Switch to headphones",
+      "description": "Makes your headphones the default playback device.",
+      "requires": ["audio/set-audio-device.ps1"],
+      "note": "Edit DEVICE at the top to match part of your device's name. Run List audio devices to see the names."
+    },
+    {
+      "file": "audio/switch-to-speakers.bat",
+      "title": "Switch to speakers",
+      "description": "Makes your speakers the default playback device.",
+      "requires": ["audio/set-audio-device.ps1"],
+      "note": "Edit DEVICE at the top to match part of your device's name. Run List audio devices to see the names."
+    },
+    {
+      "file": "audio/list-audio-devices.bat",
+      "title": "List audio devices",
+      "description": "Shows your active playback devices, so you know what to put in the switch scripts.",
+      "requires": ["audio/set-audio-device.ps1"]
+    },
+
+    {
+      "file": "network/wifi-off.bat",
+      "title": "Wi-Fi off",
+      "description": "Turns Wi-Fi off by disabling the adapter.",
+      "admin": true,
+      "note": "Assumes the adapter is named Wi-Fi. If yours isn't, edit ADAPTER (see: netsh interface show interface)."
+    },
+    {
+      "file": "network/wifi-on.bat",
+      "title": "Wi-Fi on",
+      "description": "Turns Wi-Fi back on by enabling the adapter.",
+      "admin": true,
+      "note": "Assumes the adapter is named Wi-Fi. If yours isn't, edit ADAPTER (see: netsh interface show interface)."
+    },
+    {
+      "file": "network/flush-dns.bat",
+      "title": "Flush DNS",
+      "description": "Clears the DNS cache. Often fixes a site that won't load after it moved servers."
+    },
+    {
+      "file": "network/network-reset.bat",
+      "title": "Network reset",
+      "description": "Releases and renews your IP address, flushes DNS and resets Winsock.",
+      "admin": true,
+      "note": "You'll drop offline for a few seconds. Restart the PC afterwards to finish the Winsock reset."
+    },
+    {
+      "file": "network/show-wifi-password.bat",
+      "title": "Show Wi-Fi password",
+      "description": "Shows the saved password of the Wi-Fi network you're connected to.",
+      "admin": true,
+      "note": "Expects English Windows, because it reads the output of netsh."
+    },
+
+    {
+      "file": "cleanup/clear-temp.bat",
+      "title": "Clear temp files",
+      "description": "Empties your user temp folder. Files that are in use are skipped."
+    },
+    {
+      "file": "cleanup/restart-explorer.bat",
+      "title": "Restart Explorer",
+      "description": "Restarts Windows Explorer. Fixes a frozen or glitchy taskbar and Start menu."
+    },
+    {
+      "file": "cleanup/kill-browsers.bat",
+      "title": "Close all browsers",
+      "description": "Force-closes Chrome, Edge, Firefox, Brave, Opera and Vivaldi.",
+      "note": "Unsaved form data is lost. Most browsers offer to restore your tabs next time."
+    },
+
+    {
+      "file": "focus/focus-mode.bat",
+      "title": "Focus mode on",
+      "description": "Closes chat apps and turns off notification banners. Undo with Focus mode off.",
+      "note": "Force-closes the apps listed in APPS at the top. Edit the list, and don't add apps where you might have unsaved work."
+    },
+    {
+      "file": "focus/focus-off.bat",
+      "title": "Focus mode off",
+      "description": "Turns notification banners back on after Focus mode on.",
+      "note": "If banners don't return straight away, sign out and back in."
+    },
+    {
+      "file": "focus/work-start.bat",
+      "title": "Start work",
+      "description": "Opens your usual work apps and websites in one go.",
+      "note": "A template: edit it to list your own sites and apps."
+    }
+  ]
+}

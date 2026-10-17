@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__TITLE__</title>
+<meta name="description" content="One-click Windows .bat scripts for everyday tasks: read them, download them, run them.">
+<script>
+// Apply the saved or system theme before first paint to avoid a flash.
+(function () {
+  var t = null;
+  try { t = localStorage.getItem('batkit-theme'); } catch (e) {}
+  if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  document.documentElement.dataset.theme = t;
+})();
+</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b6bcb'/%3E%3Cpath d='M8 11l6 5-6 5M17 22h8' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --text: #151a22;
+  --muted: #586272;
+  --border: #dde1e7;
+  --accent: #0b64c0;
+  --accent-ink: #ffffff;
+  --accent-soft: #e6f0fb;
+  --warn-bg: #fff3d6;
+  --warn-ink: #7a4b00;
+  --info-bg: #ece9fb;
+  --info-ink: #4b3aa8;
+  --shadow: 0 1px 2px rgba(15, 23, 42, .06);
+  --shadow-lift: 0 8px 24px rgba(15, 23, 42, .10);
+  --glow: rgba(11, 100, 192, .12);
+  --code-bg: #0f1520;
+  --code-text: #d7deea;
+  --code-muted: #7d8aa0;
+  --code-comment: #7fb685;
+  --code-string: #e8c27a;
+  --code-var: #7cc4f5;
+  --code-keyword: #c4a2f0;
+  --mono: ui-monospace, SFMono-Regular, "Cascadia Code", Consolas, Menlo, monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+/* Dark tokens. The theme toggle sets data-theme on <html>; without JS the system preference applies. */
+:root[data-theme="dark"] {
+  --bg: #0d1117;
+  --surface: #151b24;
+  --text: #e6ebf2;
+  --muted: #93a0b2;
+  --border: #28313d;
+  --accent: #4d9bf0;
+  --accent-ink: #06121f;
+  --accent-soft: #14283f;
+  --warn-bg: #3a2c0c;
+  --warn-ink: #f3c969;
+  --info-bg: #26224a;
+  --info-ink: #b9adf7;
+  --shadow: none;
+  --shadow-lift: 0 8px 28px rgba(0, 0, 0, .45);
+  --glow: rgba(77, 155, 240, .16);
+  --code-bg: #0a0e15;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #0d1117;
+    --surface: #151b24;
+    --text: #e6ebf2;
+    --muted: #93a0b2;
+    --border: #28313d;
+    --accent: #4d9bf0;
+    --accent-ink: #06121f;
+    --accent-soft: #14283f;
+    --warn-bg: #3a2c0c;
+    --warn-ink: #f3c969;
+    --info-bg: #26224a;
+    --info-ink: #b9adf7;
+    --shadow: none;
+    --shadow-lift: 0 8px 28px rgba(0, 0, 0, .45);
+    --glow: rgba(77, 155, 240, .16);
+    --code-bg: #0a0e15;
+  }
+}
+
+* { box-sizing: border-box; }
+:root { color-scheme: light dark; }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 var(--sans);
+  -webkit-text-size-adjust: 100%;
+}
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+code, kbd { font-family: var(--mono); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+[hidden] { display: none !important; }
+
+/* ---------- hero ---------- */
+.hero {
+  padding: 48px 0 28px;
+  background: radial-gradient(70% 140% at 12% 0%, var(--glow), transparent 70%);
+}
+.hero h1 { margin: 0 0 8px; font-size: clamp(2rem, 6vw, 2.75rem); line-height: 1.1; letter-spacing: -.02em; }
+.hero h1 .prompt { color: var(--accent); font-family: var(--mono); margin-right: .25em; }
+.tagline { margin: 0 0 20px; max-width: 46rem; color: var(--muted); font-size: 1.125rem; }
+.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.pills li {
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: .8125rem;
+  font-weight: 600;
+}
+.icon-btn {
+  appearance: none;
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-left: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+.icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+.icon-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+:root[data-theme="dark"] .i-moon,
+:root:not([data-theme="dark"]) .i-sun { display: none; }
+.safety {
+  margin: 20px 0 0;
+  padding: 12px 14px;
+  max-width: 46rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 8px;
+  font-size: .9375rem;
+  color: var(--muted);
+}
+.safety strong { color: var(--text); }
+
+/* ---------- buttons ---------- */
+.btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: .9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.small { min-height: 36px; padding: 0 12px; font-size: .875rem; }
+
+/* ---------- toolbar ---------- */
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.toolbar .wrap { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; padding-top: 10px; padding-bottom: 10px; }
+.search { position: relative; flex: 1 1 240px; max-width: 360px; }
+.search svg { position: absolute; left: 12px; top: 50%; width: 16px; height: 16px; margin-top: -8px; fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; pointer-events: none; }
+.search kbd {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0 6px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--muted);
+  font-size: .75rem;
+  pointer-events: none;
+}
+.search input:focus + kbd, .search input:not(:placeholder-shown) + kbd { display: none; }
+.search input {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 36px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+.search input::placeholder { color: var(--muted); }
+.chips { display: flex; gap: 8px; overflow-x: auto; flex: 1 1 320px; padding: 2px; scrollbar-width: thin; }
+.chip {
+  appearance: none;
+  flex: none;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: .875rem;
+  cursor: pointer;
+}
+.chip .n { color: var(--muted); margin-left: 4px; }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.chip[aria-pressed="true"] .n { color: inherit; opacity: .8; }
+
+/* ---------- list ---------- */
+main { padding: 8px 0 56px; }
+.cat { padding-top: 28px; scroll-margin-top: 70px; }
+.cat h2 { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 1.375rem; letter-spacing: -.01em; }
+.cat h2::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--cat, var(--accent)); }
+.cat h2 .n { padding: 0 8px; border-radius: 999px; background: var(--accent-soft); color: var(--muted); font-size: .75rem; font-weight: 600; line-height: 1.6; }
+.blurb { margin: 2px 0 14px; color: var(--muted); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; }
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  border-top: 3px solid var(--cat, var(--accent));
+  box-shadow: var(--shadow);
+  transition: transform .15s, box-shadow .15s, border-color .15s;
+}
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lift); }
+@media (prefers-reduced-motion: reduce) { .card { transition: none; } .card:hover { transform: none; } }
+.card h3 { margin: 0; font-size: 1.0625rem; line-height: 1.3; }
+.fname { display: block; margin-top: 2px; color: var(--muted); font-size: .8125rem; overflow-wrap: anywhere; }
+.card p { margin: 0; }
+.desc { color: var(--text); }
+.badges { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.badge { padding: 2px 8px; border-radius: 999px; font-size: .75rem; font-weight: 600; }
+.badge.admin { background: var(--warn-bg); color: var(--warn-ink); }
+.badge.helper { background: var(--info-bg); color: var(--info-ink); }
+.note { font-size: .875rem; color: var(--muted); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 8px; }
+.empty { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 56px 0; text-align: center; color: var(--muted); }
+.empty p { margin: 0; }
+
+footer { padding: 24px 0 40px; border-top: 1px solid var(--border); color: var(--muted); font-size: .875rem; }
+footer p { margin: 0 0 4px; }
+footer a { color: var(--accent); }
+
+/* ---------- viewer ---------- */
+dialog {
+  width: min(960px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  overflow: hidden;
+}
+dialog[open] { display: flex; }
+dialog::backdrop { background: rgba(5, 10, 18, .6); backdrop-filter: blur(3px); }
+dialog[open] { box-shadow: 0 24px 64px rgba(0, 0, 0, .4); }
+.viewer { display: flex; flex-direction: column; width: 100%; min-height: 0; }
+.v-head { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+.v-title { flex: 1 1 200px; min-width: 0; }
+.v-title h2 { margin: 0; font-size: 1.125rem; line-height: 1.3; }
+.v-title .badges { margin-top: 6px; }
+.v-actions { display: flex; gap: 8px; }
+.tabs { display: flex; gap: 6px; padding: 8px 16px 0; border-bottom: 1px solid var(--border); overflow-x: auto; }
+.tab {
+  appearance: none;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-family: var(--mono);
+  font-size: .8125rem;
+  cursor: pointer;
+}
+.tab[aria-selected="true"] { background: var(--code-bg); color: var(--code-text); }
+.v-note { margin: 0; padding: 10px 16px; background: var(--accent-soft); font-size: .875rem; }
+.code-wrap { flex: 1 1 auto; min-height: 120px; overflow: auto; background: var(--code-bg); }
+.code { counter-reset: ln; margin: 0; padding: 14px 16px 18px; color: var(--code-text); font: .8125rem/1.65 var(--mono); tab-size: 4; }
+.code .l { display: block; position: relative; min-height: 1.65em; padding-left: 3.4em; white-space: pre-wrap; overflow-wrap: anywhere; counter-increment: ln; }
+.code .l::before { content: counter(ln); position: absolute; left: 0; width: 2.4em; text-align: right; color: var(--code-muted); user-select: none; }
+.code .c { color: var(--code-comment); }
+.code .s { color: var(--code-string); }
+.code .v { color: var(--code-var); }
+.code .k { color: var(--code-keyword); }
+
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translate(-50%, 12px);
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: var(--text);
+  color: var(--bg);
+  font-size: .9375rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s, transform .15s;
+  z-index: 50;
+}
+#toast.show { opacity: 1; transform: translate(-50%, 0); }
+@media (prefers-reduced-motion: reduce) { #toast { transition: none; } }
+
+@media (max-width: 640px) {
+  /* Row 1: search + theme toggle. Row 2: category chips. */
+  .search { flex: 1 1 0; max-width: none; }
+  .icon-btn { order: 2; margin-left: 0; }
+  .chips { order: 3; flex-basis: 100%; }
+}
+@media (max-width: 520px) {
+  .hero { padding-top: 28px; }
+  .v-actions { width: 100%; }
+  .v-actions .btn { flex: 1; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1><span class="prompt" aria-hidden="true">&gt;_</span>batkit</h1>
+    <p class="tagline" id="tagline"></p>
+    <div class="hero-actions">
+      <button class="btn primary" id="dl-all" type="button">Download all (.zip)</button>
+      <a class="btn" id="repo" href="#" hidden>View on GitHub</a>
+      <ul class="pills" id="pills"></ul>
+    </div>
+    <p class="safety"><strong>Read before you run.</strong> These are plain-text scripts that change settings on your PC. Use <em>View</em> to see exactly what one does. Windows may warn about downloaded <code>.bat</code> files; that's normal for any script.</p>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="wrap">
+    <div class="search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <input id="q" type="search" placeholder="Search scripts" aria-label="Search scripts" autocomplete="off">
+      <kbd aria-hidden="true">/</kbd>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+    <button class="icon-btn" id="theme" type="button" aria-label="Switch theme">
+      <svg class="i-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="i-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</div>
+
+<main class="wrap">
+  <div id="list"></div>
+  <div class="empty" id="empty" hidden>
+    <p>No scripts match your search.</p>
+    <button class="btn small" id="clear" type="button">Clear search and filters</button>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>MIT licensed. Run a script by double-clicking it. Keep any <code>.ps1</code> helper next to the script that needs it.</p>
+    <p>This page is generated from <code>catalog.json</code> and <code>scripts/</code>. Edit those, not this file.</p>
+  </div>
+</footer>
+
+<dialog id="viewer" aria-labelledby="v-title">
+  <div class="viewer">
+    <div class="v-head">
+      <div class="v-title">
+        <h2 id="v-title"></h2>
+        <ul class="badges" id="v-badges"></ul>
+      </div>
+      <div class="v-actions">
+        <button class="btn small" id="v-copy" type="button">Copy</button>
+        <button class="btn small primary" id="v-dl" type="button">Download</button>
+        <button class="btn small" id="v-close" type="button" aria-label="Close">Close</button>
+      </div>
+    </div>
+    <div class="tabs" id="v-tabs" role="tablist" hidden></div>
+    <p class="v-note" id="v-note" hidden></p>
+    <div class="code-wrap"><pre class="code" id="v-code" tabindex="0"></pre></div>
+  </div>
+</dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+'use strict';
+const DATA = /*__CATALOG__*/null;
+
+// ---------------------------------------------------------------- helpers
+
+const $ = (sel, root = document) => root.querySelector(sel);
+
+function h(tag, props = {}, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) {
+    if (v == null) continue;
+    if (k === 'class') n.className = v;
+    else if (k === 'text') n.textContent = v;
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
+    else n.setAttribute(k, v);
+  }
+  n.append(...kids.filter((k) => k != null));
+  return n;
+}
+
+const base = (path) => path.split('/').pop();
+const catTitle = (id) => DATA.categories.find((c) => c.id === id).title;
+const byFile = (file) => DATA.scripts.find((s) => s.file === file);
+
+let toastTimer;
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = h('textarea', { style: 'position:fixed;opacity:0' });
+    ta.value = text;
+    document.body.append(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
+  }
+  toast('Copied to clipboard');
+}
+
+// ---------------------------------------------------------------- downloads
+
+function saveBlob(blob, name) {
+  const a = h('a', { href: URL.createObjectURL(blob), download: name });
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+}
+
+const encode = (s) => new TextEncoder().encode(s);
+
+const CRC_TABLE = (() => {
+  const t = new Uint32Array(256);
+  for (let n = 0; n < 256; n++) {
+    let c = n;
+    for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+    t[n] = c >>> 0;
+  }
+  return t;
+})();
+
+function crc32(bytes) {
+  let c = 0xffffffff;
+  for (let i = 0; i < bytes.length; i++) c = CRC_TABLE[(c ^ bytes[i]) & 0xff] ^ (c >>> 8);
+  return (c ^ 0xffffffff) >>> 0;
+}
+
+// Minimal "stored" (uncompressed) zip writer: the scripts are tiny, so this avoids any library.
+function makeZip(entries) {
+  const now = new Date();
+  const dosTime = (now.getHours() << 11) | (now.getMinutes() << 5) | (now.getSeconds() >> 1);
+  const dosDate = ((now.getFullYear() - 1980) << 9) | ((now.getMonth() + 1) << 5) | now.getDate();
+  const parts = [];
+  const central = [];
+  let offset = 0;
+
+  for (const { name, data } of entries) {
+    const nameBytes = encode(name);
+    const crc = crc32(data);
+
+    const local = new DataView(new ArrayBuffer(30));
+    local.setUint32(0, 0x04034b50, true);
+    local.setUint16(4, 20, true);
+    local.setUint16(6, 0x0800, true); // UTF-8 file names
+    local.setUint16(10, dosTime, true);
+    local.setUint16(12, dosDate, true);
+    local.setUint32(14, crc, true);
+    local.setUint32(18, data.length, true);
+    local.setUint32(22, data.length, true);
+    local.setUint16(26, nameBytes.length, true);
+    parts.push(new Uint8Array(local.buffer), nameBytes, data);
+
+    const dir = new DataView(new ArrayBuffer(46));
+    dir.setUint32(0, 0x02014b50, true);
+    dir.setUint16(4, 20, true);
+    dir.setUint16(6, 20, true);
+    dir.setUint16(8, 0x0800, true);
+    dir.setUint16(12, dosTime, true);
+    dir.setUint16(14, dosDate, true);
+    dir.setUint32(16, crc, true);
+    dir.setUint32(20, data.length, true);
+    dir.setUint32(24, data.length, true);
+    dir.setUint16(28, nameBytes.length, true);
+    dir.setUint32(42, offset, true);
+    central.push(new Uint8Array(dir.buffer), nameBytes);
+
+    offset += 30 + nameBytes.length + data.length;
+  }
+
+  const centralSize = central.reduce((n, c) => n + c.length, 0);
+  const end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true);
+  end.setUint16(8, entries.length, true);
+  end.setUint16(10, entries.length, true);
+  end.setUint32(12, centralSize, true);
+  end.setUint32(16, offset, true);
+  return new Blob([...parts, ...central, new Uint8Array(end.buffer)], { type: 'application/zip' });
+}
+
+// One .bat downloads as a plain file; one that needs a helper downloads as a zip with both side by side.
+function downloadScript(s) {
+  if (!s.requires.length) {
+    saveBlob(new Blob([encode(DATA.files[s.file])], { type: 'application/octet-stream' }), s.name);
+    return;
+  }
+  const entries = [s.file, ...s.requires].map((f) => ({ name: base(f), data: encode(DATA.files[f]) }));
+  saveBlob(makeZip(entries), s.name.replace(/\.bat$/, '') + '.zip');
+}
+
+function downloadAll() {
+  const readme = [
+    'batkit',
+    '',
+    'Double-click any .bat file to run it.',
+    'Keep each .ps1 file in the same folder as the scripts that use it.',
+    'Open a script in Notepad first if you want to see what it does.',
+    '',
+  ].join('\r\n');
+  const entries = Object.keys(DATA.files).map((f) => ({ name: `batkit/${f}`, data: encode(DATA.files[f]) }));
+  entries.push({ name: 'batkit/README.txt', data: encode(readme) });
+  saveBlob(makeZip(entries), 'batkit.zip');
+}
+
+// ---------------------------------------------------------------- list
+
+const state = { q: '', cat: 'all' };
+const CAT_COLORS = { display: '#3b82f6', power: '#f59e0b', audio: '#a855f7', network: '#10b981', cleanup: '#ef4444', focus: '#06b6d4' };
+
+function matches(s) {
+  if (state.cat !== 'all' && s.category !== state.cat) return false;
+  const q = state.q.trim().toLowerCase();
+  if (!q) return true;
+  return [s.title, s.name, s.description, s.note, catTitle(s.category)].join(' ').toLowerCase().includes(q);
+}
+
+function badges(s) {
+  const items = [];
+  if (s.admin) items.push(h('li', { class: 'badge admin', title: 'Windows asks for permission (UAC) when this runs', text: 'Needs admin' }));
+  if (s.requires.length) items.push(h('li', { class: 'badge helper', title: 'Ships with a helper file that must stay beside it', text: 'Includes helper file' }));
+  return items;
+}
+
+function card(s) {
+  const dlLabel = s.requires.length ? 'Download .zip' : 'Download';
+  return h('article', { class: 'card', id: 'card-' + s.file.replace(/[^\w-]/g, '-') },
+    h('div', {}, h('h3', { text: s.title }), h('code', { class: 'fname', text: s.name })),
+    h('p', { class: 'desc', text: s.description }),
+    badges(s).length ? h('ul', { class: 'badges' }, ...badges(s)) : null,
+    s.note ? h('p', { class: 'note', text: s.note }) : null,
+    h('div', { class: 'actions' },
+      h('button', { class: 'btn small', type: 'button', 'aria-label': `View ${s.title}`, onclick: () => openViewer(s) }, 'View'),
+      h('button', { class: 'btn small primary', type: 'button', 'aria-label': `${dlLabel}: ${s.title}`, onclick: () => downloadScript(s) }, dlLabel),
+      h('button', { class: 'btn small', type: 'button', 'aria-label': `Copy ${s.title}`, onclick: () => copyText(DATA.files[s.file]) }, 'Copy'),
+    ),
+  );
+}
+
+function renderList() {
+  const list = $('#list');
+  list.replaceChildren();
+  let shown = 0;
+  for (const c of DATA.categories) {
+    const items = DATA.scripts.filter((s) => s.category === c.id && matches(s));
+    if (!items.length) continue;
+    shown += items.length;
+    list.append(h('section', { class: 'cat', 'aria-labelledby': 'h-' + c.id, style: `--cat:${CAT_COLORS[c.id] || 'var(--accent)'}` },
+      h('h2', { id: 'h-' + c.id }, c.title, h('span', { class: 'n', text: items.length })),
+      h('p', { class: 'blurb', text: c.blurb }),
+      h('div', { class: 'grid' }, ...items.map(card)),
+    ));
+  }
+  $('#empty').hidden = shown > 0;
+}
+
+function renderChips() {
+  const chips = $('#chips');
+  const defs = [{ id: 'all', title: 'All', n: DATA.scripts.length }].concat(
+    DATA.categories.map((c) => ({ id: c.id, title: c.title, n: DATA.scripts.filter((s) => s.category === c.id).length })),
+  );
+  chips.replaceChildren(...defs.map((d) => h('button', {
+    class: 'chip',
+    type: 'button',
+    'aria-pressed': String(state.cat === d.id),
+    onclick: () => {
+      state.cat = d.id;
+      renderChips();
+      renderList();
+    },
+  }, d.title, h('span', { class: 'n', text: d.n }))));
+}
+
+// ---------------------------------------------------------------- viewer
+
+const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const TOKEN = /("[^"]*")|(%[^%\s"]+%|%~?\w+|![\w]+!)|(\b(?:if|else|exit|set|setlocal|goto|call|for|in|do|not|defined|errorlevel|start|echo|param|foreach|function|return|try|catch)\b)/gi;
+
+function highlightLine(line, ext) {
+  const t = line.trimStart();
+  const comment = ext === 'ps1' ? t.startsWith('#') : /^(rem\b|::)/i.test(t);
+  if (comment) return `<span class="c">${esc(line)}</span>`;
+  let out = '';
+  let last = 0;
+  line.replace(TOKEN, (m, str, v, kw, offset) => {
+    out += esc(line.slice(last, offset));
+    out += `<span class="${str ? 's' : v ? 'v' : 'k'}">${esc(m)}</span>`;
+    last = offset + m.length;
+    return m;
+  });
+  return out + esc(line.slice(last));
+}
+
+const dlg = $('#viewer');
+let current = null;
+
+function showFile(file) {
+  current.file = file;
+  const ext = file.split('.').pop().toLowerCase();
+  const text = DATA.files[file].replace(/\r\n/g, '\n').replace(/\n$/, '');
+  $('#v-code').innerHTML = text.split('\n').map((l) => `<span class="l">${highlightLine(l, ext)}</span>`).join('');
+  $('#v-code').parentElement.scrollTop = 0;
+  for (const t of document.querySelectorAll('.tab')) t.setAttribute('aria-selected', String(t.dataset.file === file));
+}
+
+function openViewer(s, file = s.file) {
+  current = { s, file };
+  $('#v-title').textContent = s.title;
+  $('#v-badges').replaceChildren(...badges(s));
+  $('#v-badges').hidden = !badges(s).length;
+  $('#v-note').textContent = s.note;
+  $('#v-note').hidden = !s.note;
+  $('#v-dl').textContent = s.requires.length ? 'Download .zip' : 'Download';
+
+  const tabs = $('#v-tabs');
+  const files = [s.file, ...s.requires];
+  tabs.hidden = files.length < 2;
+  tabs.replaceChildren(...files.map((f) => h('button', {
+    class: 'tab',
+    type: 'button',
+    role: 'tab',
+    'data-file': f,
+    onclick: () => showFile(f),
+  }, base(f))));
+
+  showFile(file);
+  if (!dlg.open) dlg.showModal();
+  history.replaceState(null, '', '#' + s.file);
+}
+
+$('#v-close').addEventListener('click', () => dlg.close());
+$('#v-copy').addEventListener('click', () => copyText(DATA.files[current.file]));
+$('#v-dl').addEventListener('click', () => downloadScript(current.s));
+dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+dlg.addEventListener('close', () => {
+  current = null;
+  history.replaceState(null, '', location.pathname + location.search);
+});
+
+function openFromHash() {
+  const s = byFile(decodeURIComponent(location.hash.slice(1)));
+  if (s) openViewer(s);
+}
+
+// ---------------------------------------------------------------- start
+
+$('#tagline').textContent = DATA.site.tagline;
+$('#pills').replaceChildren(...[
+  `${DATA.scripts.length} scripts`,
+  `${DATA.categories.length} categories`,
+  'Plain text, nothing to install',
+].map((t) => h('li', { text: t })));
+if (DATA.site.repo) {
+  const repo = $('#repo');
+  repo.href = DATA.site.repo;
+  repo.hidden = false;
+}
+$('#dl-all').addEventListener('click', downloadAll);
+$('#q').addEventListener('input', (e) => {
+  state.q = e.target.value;
+  renderList();
+});
+window.addEventListener('hashchange', openFromHash);
+
+$('#clear').addEventListener('click', () => {
+  state.q = '';
+  state.cat = 'all';
+  $('#q').value = '';
+  renderChips();
+  renderList();
+});
+
+// "/" jumps to search, like on most doc sites.
+document.addEventListener('keydown', (e) => {
+  const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName);
+  if (e.key === '/' && !typing && !dlg.open && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    e.preventDefault();
+    $('#q').focus();
+  }
+});
+
+// Theme toggle. The pre-paint script in <head> picked the initial theme; this flips and remembers it.
+const root = document.documentElement;
+function syncThemeButton() {
+  const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+  $('#theme').setAttribute('aria-label', `Switch to ${next} mode`);
+  $('#theme').title = `Switch to ${next} mode`;
+}
+$('#theme').addEventListener('click', () => {
+  root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+  try { localStorage.setItem('batkit-theme', root.dataset.theme); } catch {}
+  syncThemeButton();
+});
+// Until the visitor picks a theme themselves, follow the system setting live.
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+  let saved = null;
+  try { saved = localStorage.getItem('batkit-theme'); } catch {}
+  if (saved) return;
+  root.dataset.theme = e.matches ? 'dark' : 'light';
+  syncThemeButton();
+});
+syncThemeButton();
+
+renderChips();
+renderList();
+openFromHash();
+</script>
+</body>
+</html>
